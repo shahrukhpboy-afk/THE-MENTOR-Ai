@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Mentor</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#08070a;
+  --s1:#0f0d13;
+  --s2:#161320;
+  --s3:#1e1a2a;
+  --gold:#c9a84c;
+  --gold2:#e8c876;
+  --golddim:rgba(201,168,76,0.10);
+  --green:#2dce7a;
+  --blue:#38bdf8;
+  --purple:#a78bfa;
+  --orange:#fb923c;
+  --text:#ede8f5;
+  --muted:#6a6280;
+  --border:rgba(201,168,76,0.12);
+  --border2:rgba(255,255,255,0.05);
+}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Outfit',sans-serif;
+  font-weight:300;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 10%,rgba(167,139,250,0.07) 0%,transparent 55%),
+    radial-gradient(ellipse 50% 50% at 80% 80%,rgba(201,168,76,0.06) 0%,transparent 55%);
+}
+
+
+/* Gemini Key Bar */
+.gemini-bar{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 20px;
+  background:rgba(201,168,76,0.06);
+  border-bottom:1px solid rgba(201,168,76,0.12);
+}
+.gemini-bar input{
+  flex:1;background:rgba(255,255,255,0.04);
+  border:1.5px solid rgba(201,168,76,0.2);
+  border-radius:10px;padding:7px 14px;
+  color:#e8c876;font-family:'Outfit',sans-serif;
+  font-size:12px;outline:none;
+  transition:border-color 0.2s;
+}
+.gemini-bar input:focus{border-color:rgba(201,168,76,0.5);}
+.gemini-bar input::placeholder{color:#6a6280;font-style:italic;}
+.gkey-status{
+  font-size:10px;font-weight:600;letter-spacing:1.5px;
+  text-transform:uppercase;white-space:nowrap;
+  padding:4px 10px;border-radius:6px;
+  background:rgba(255,255,255,0.04);color:#6a6280;
+  transition:all 0.2s;flex-shrink:0;
+}
+.gkey-status.ok{background:rgba(45,206,122,0.12);color:#2dce7a;}
+.gemini-bar label{font-size:12px;color:#c9a84c;white-space:nowrap;flex-shrink:0;}
+
+/* ── NAV ── */
+.nav{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 24px;
+  background:rgba(8,7,10,0.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border2);
+}
+.nav-logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;color:var(--gold2);letter-spacing:2px;
+}
+.nav-tabs{display:flex;gap:6px;}
+.nav-tab{
+  padding:6px 14px;border-radius:20px;
+  background:transparent;border:1px solid transparent;
+  font-size:11px;color:var(--muted);letter-spacing:1px;
+  text-transform:uppercase;cursor:pointer;
+  font-family:'Outfit',sans-serif;transition:all 0.2s;
+}
+.nav-tab:hover{color:var(--text);border-color:var(--border2);}
+.nav-tab.active{background:var(--golddim);border-color:var(--border);color:var(--gold2);}
+
+/* ── HERO ── */
+.hero{
+  padding:60px 24px 40px;text-align:center;position:relative;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--golddim);border:1px solid var(--border);
+  border-radius:30px;padding:6px 18px;
+  font-size:10px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--gold);margin-bottom:20px;
+  animation:fadeUp 0.7s ease both;
+}
+.hero-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(40px,8vw,80px);font-weight:300;
+  line-height:1;letter-spacing:-1px;margin-bottom:16px;
+  animation:fadeUp 0.7s 0.1s ease both;
+}
+.hero-title em{font-style:italic;color:var(--gold2);}
+.hero-sub{
+  font-size:14px;color:var(--muted);max-width:420px;
+  margin:0 auto 32px;line-height:1.8;
+  animation:fadeUp 0.7s 0.2s ease both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* Progress overview */
+.overview-strip{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:10px;max-width:700px;margin:0 auto 40px;
+  animation:fadeUp 0.7s 0.3s ease both;
+}
+.ov-card{
+  background:var(--s1);border:1px solid var(--border2);
+  border-radius:16px;padding:16px 12px;text-align:center;
+  transition:all 0.3s;cursor:pointer;
+}
+.ov-card:hover{transform:translateY(-3px);}
+.ov-card.biz  .ov-icon{color:var(--gold);}
+.ov-card.spi  .ov-icon{color:var(--purple);}
+.ov-card.hlt  .ov-icon{color:var(--green);}
+.ov-card.ent  .ov-icon{color:var(--orange);}
+.ov-icon{font-size:22px;margin-bottom:8px;}
+.ov-label{font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+.ov-pct{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--text);}
+.ov-bar{height:3px;background:rgba(255,255,255,0.06);border-radius:2px;margin-top:8px;overflow:hidden;}
+.ov-fill{height:100%;border-radius:2px;transition:width 1s ease;}
+.ov-card.biz  .ov-fill{background:linear-gradient(90deg,var(--gold),var(--gold2));}
+.ov-card.spi  .ov-fill{background:linear-gradient(90deg,var(--purple),#c4b5fd);}
+.ov-card.hlt  .ov-fill{background:linear-gradient(90deg,var(--green),#86efac);}
+.ov-card.ent  .ov-fill{background:linear-gradient(90deg,var(--orange),#fdba74);}
+
+/* ── MAIN LAYOUT ── */
+.main{
+  max-width:900px;margin:0 auto;
+  padding:0 16px 80px;
+}
+
+/* Category sections */
+.cat-section{margin-bottom:40px;}
+.cat-header{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:16px;padding:0 4px;
+}
+.cat-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.cat-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:24px;font-weight:600;
+}
+.cat-count{
+  font-size:11px;color:var(--muted);
+  letter-spacing:2px;text-transform:uppercase;
+  margin-left:auto;
+}
+.cat-add-btn{
+  padding:6px 14px;border-radius:8px;
+  font-size:11px;font-family:'Outfit',sans-serif;
+  letter-spacing:1px;text-transform:uppercase;
+  cursor:pointer;border:1px solid;transition:all 0.2s;
+  background:transparent;
+}
+
+/* Day cards grid */
+.days-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(130px,1fr));
+  gap:10px;
+}
+.day-card{
+  background:var(--s1);border:1px solid var(--border2);
+  border-radius:14px;padding:14px 12px;
+  cursor:pointer;transition:all 0.25s;
+  position:relative;overflow:hidden;
+  min-height:90px;
+}
+.day-card:hover{transform:translateY(-3px);border-color:var(--border);}
+.day-card.done{opacity:0.7;}
+.day-card.done::after{
+  content:'✓';position:absolute;top:8px;right:10px;
+  font-size:14px;font-weight:700;
+}
+.day-card.biz.done::after{color:var(--gold);}
+.day-card.spi.done::after{color:var(--purple);}
+.day-card.hlt.done::after{color:var(--green);}
+.day-card.ent.done::after{color:var(--orange);}
+
+.day-num{
+  font-size:10px;color:var(--muted);
+  letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:6px;
+}
+.day-task{
+  font-size:12px;color:var(--text);
+  line-height:1.5;
+}
+.day-card.empty .day-task{color:var(--muted);font-style:italic;}
+
+/* Accent left border */
+.day-card.biz{border-left:2px solid rgba(201,168,76,0.3);}
+.day-card.biz:hover{border-left-color:var(--gold);}
+.day-card.spi{border-left:2px solid rgba(167,139,250,0.3);}
+.day-card.spi:hover{border-left-color:var(--purple);}
+.day-card.hlt{border-left:2px solid rgba(45,206,122,0.3);}
+.day-card.hlt:hover{border-left-color:var(--green);}
+.day-card.ent{border-left:2px solid rgba(251,146,60,0.3);}
+.day-card.ent:hover{border-left-color:var(--orange);}
+
+/* ── MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(8px);z-index:200;
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;opacity:0;pointer-events:none;
+  transition:opacity 0.2s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:24px;padding:32px 28px;
+  width:100%;max-width:420px;
+  transform:translateY(20px);transition:transform 0.3s;
+  position:relative;
+}
+.modal-overlay.open .modal{transform:translateY(0);}
+.modal-top{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+.modal-day{
+  font-size:11px;color:var(--muted);
+  letter-spacing:2px;text-transform:uppercase;
+}
+.modal-cat-badge{
+  padding:3px 10px;border-radius:20px;
+  font-size:10px;letter-spacing:1px;
+  text-transform:uppercase;margin-left:auto;
+}
+.modal h3{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;margin-bottom:16px;
+}
+.modal-input{
+  width:100%;background:var(--s3);
+  border:1.5px solid var(--border2);
+  border-radius:12px;padding:12px 16px;
+  color:var(--text);font-family:'Outfit',sans-serif;
+  font-size:14px;resize:none;min-height:90px;
+  outline:none;transition:border-color 0.2s;line-height:1.6;
+}
+.modal-input:focus{border-color:var(--border);}
+.modal-input::placeholder{color:var(--muted);font-style:italic;}
+.modal-actions{display:flex;gap:10px;margin-top:16px;}
+.btn-save{
+  flex:1;padding:12px;border-radius:12px;
+  font-family:'Outfit',sans-serif;font-size:13px;
+  font-weight:600;letter-spacing:1px;text-transform:uppercase;
+  border:none;cursor:pointer;transition:all 0.2s;
+}
+.btn-cancel{
+  padding:12px 20px;border-radius:12px;
+  background:transparent;border:1px solid var(--border2);
+  color:var(--muted);font-family:'Outfit',sans-serif;
+  font-size:13px;cursor:pointer;transition:all 0.2s;
+}
+.btn-cancel:hover{border-color:var(--border);color:var(--text);}
+.btn-done-toggle{
+  width:100%;padding:10px;border-radius:10px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--border2);
+  color:var(--muted);font-family:'Outfit',sans-serif;
+  font-size:12px;cursor:pointer;transition:all 0.2s;
+  margin-top:8px;
+}
+.btn-done-toggle:hover{background:rgba(255,255,255,0.07);color:var(--text);}
+.modal-close{
+  position:absolute;top:16px;right:16px;
+  width:28px;height:28px;border-radius:8px;
+  background:rgba(255,255,255,0.05);border:none;
+  color:var(--muted);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s;
+}
+.modal-close:hover{background:rgba(255,255,255,0.1);color:var(--text);}
+
+
+
+
+
+.ai-gen-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:10px;border-radius:10px;
+  background:var(--golddim);border:1px solid var(--border);
+  color:var(--gold2);font-family:'Outfit',sans-serif;
+  font-size:12px;cursor:pointer;transition:all 0.2s;
+  margin-bottom:10px;letter-spacing:0.5px;
+}
+.ai-gen-btn:hover{background:rgba(201,168,76,0.18);}
+.ai-gen-btn.loading{opacity:0.6;pointer-events:none;}
+
+
+
+/* Responsive */
+@media(max-width:600px){
+  .overview-strip{grid-template-columns:repeat(2,1fr);}
+  .nav-tabs{display:none;}
+  .days-grid{grid-template-columns:repeat(3,1fr);}
+}
+</style>
+</head>
+<body>
+
+
+<!-- Gemini API Key Bar -->
+<div class="gemini-bar">
+  <label>🔑 Gemini Key:</label>
+  <input type="password" id="geminiKey"
+    placeholder="AIzaSy... (aistudio.google.com se free milti hai)"
+    oninput="checkGeminiKey(this)"
+    autocomplete="off"
+  />
+  <span class="gkey-status" id="gkeyStatus">NOT SET</span>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <div class="nav-logo">THE MENTOR</div>
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="filterCat('all',this)">All</div>
+    <div class="nav-tab" onclick="filterCat('biz',this)">💼 Business</div>
+    <div class="nav-tab" onclick="filterCat('spi',this)">🕌 Spiritual</div>
+    <div class="nav-tab" onclick="filterCat('hlt',this)">💪 Health</div>
+    <div class="nav-tab" onclick="filterCat('ent',this)">🚀 Entrepreneur</div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">✦ The Mentor — 30-Day Plan</div>
+  <h1 class="hero-title">Build Your<br><em>Life</em> in 30 Days</h1>
+  <p class="hero-sub">Har din ek step — Business, Spiritual Growth, Health, aur Entrepreneurship mein. Apna plan likho aur track karo.</p>
+
+  <div class="overview-strip">
+    <div class="ov-card biz" onclick="filterCat('biz',null)">
+      <div class="ov-icon">💼</div>
+      <div class="ov-label">Business</div>
+      <div class="ov-pct" id="pct-biz">0%</div>
+      <div class="ov-bar"><div class="ov-fill" id="bar-biz" style="width:0%"></div></div>
+    </div>
+    <div class="ov-card spi" onclick="filterCat('spi',null)">
+      <div class="ov-icon">🕌</div>
+      <div class="ov-label">Spiritual</div>
+      <div class="ov-pct" id="pct-spi">0%</div>
+      <div class="ov-bar"><div class="ov-fill" id="bar-spi" style="width:0%"></div></div>
+    </div>
+    <div class="ov-card hlt" onclick="filterCat('hlt',null)">
+      <div class="ov-icon">💪</div>
+      <div class="ov-label">Health</div>
+      <div class="ov-pct" id="pct-hlt">0%</div>
+      <div class="ov-bar"><div class="ov-fill" id="bar-hlt" style="width:0%"></div></div>
+    </div>
+    <div class="ov-card ent" onclick="filterCat('ent',null)">
+      <div class="ov-icon">🚀</div>
+      <div class="ov-label">Entrepreneur</div>
+      <div class="ov-pct" id="pct-ent">0%</div>
+      <div class="ov-bar"><div class="ov-fill" id="bar-ent" style="width:0%"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="mainContent"></div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-top">
+      <div class="modal-day" id="modalDayLabel">Day 1</div>
+      <div class="modal-cat-badge" id="modalCatBadge">Business</div>
+    </div>
+    <h3 id="modalTitle">Add Your Task</h3>
+    <button class="ai-gen-btn" id="aiGenBtn" onclick="generateWithAI()">✨ Gemini AI se generate karo</button>
+    <textarea class="modal-input" id="modalInput" rows="3" placeholder="Aaj ka task likhein... ya 'Suggest' button se idea lo 💡"></textarea>
+    <div class="modal-actions">
+      <button class="btn-save" id="btnSave" onclick="saveTask()">Save</button>
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+    </div>
+    <button class="btn-done-toggle" id="btnDoneToggle" onclick="toggleDone()">Mark as Done ✓</button>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+const CATEGORIES = [
+  { id:'biz', label:'Business',       emoji:'💼', color:'var(--gold)',   colorVal:'#c9a84c' },
+  { id:'spi', label:'Spiritual',      emoji:'🕌', color:'var(--purple)', colorVal:'#a78bfa' },
+  { id:'hlt', label:'Health/Fitness', emoji:'💪', color:'var(--green)',  colorVal:'#2dce7a' },
+  { id:'ent', label:'Entrepreneurship',emoji:'🚀',color:'var(--orange)', colorVal:'#fb923c' }
+];
+
+const DEFAULT_TASKS = {
+  biz: [
+    'Business idea validate karo','Market research karo','Competitor analysis','Target audience define karo',
+    'Business model canvas banao','Revenue streams sochho','Brand name finalize karo','Logo design karo',
+    'Social media accounts banao','Website domain lo','Landing page banao','Email list start karo',
+    'First product/service define karo','Pricing strategy banao','Sales funnel design karo',
+    'Content calendar banao','First blog post likho','Networking — 5 log se milo','Mentor dhundho',
+    'Budget plan banao','Accounting system setup karo','Legal structure sochho','Partnership explore karo',
+    'Customer feedback lo','Product improve karo','First sale karo!','Review & reflect karo',
+    'Scale strategy banao','Team hire plan banao','Next 30 days ka plan banao'
+  ],
+  spi: [
+    'Fajr prayer + Quran tilawat','Zikr — 100 bar SubhanAllah','Shukr journal likho','Istighfar — 70 bar',
+    'Quran tafseer parho','Sadqa karo — kisi ki madad karo','Durood Shareef — 300 bar','Nafl namaz parho',
+    'Islamic book parho — 20 min','Tawbah aur niyyat refresh karo','Tahajjud ki koshish karo',
+    'Family ke liye dua karo','Kisi se maafi maango','Gheebet bilkul chhod do','Halal rizq ke liye dua',
+    'Quran hifz — ek ayat yaad karo','Mosque mein jao','Islamic podcast suno — 30 min',
+    'Pani peene ki sunnat ada karo','Burai se bacho — roz hisaab lo','Surah Mulk raat ko parho',
+    'Ehsan — kisi ke saath achha karo','Patience practice karo','Tawakkul strengthen karo',
+    'Niyyat check karo — sincere rehna','Ilm haasil karo — Islamic class','Dua list banao',
+    'Zakat calculate karo','30 din ka spiritual review','Agle 30 din ke goals set karo'
+  ],
+  hlt: [
+    'Morning walk — 30 min','Push-ups — 20 reps','Paani — 8 glass piyo','Sleep 8 hrs — sone ka waqt fix karo',
+    'Healthy breakfast khao','Gym join karo ya home workout start','Stretching — 15 min',
+    'Junk food chhodo — ek din','Running — 2km','Meditation — 10 min','Yoga — 20 min',
+    'Sugar intake reduce karo','Vegetables — 3 types khao','Screen time — 2 hrs kam karo',
+    'Cold shower try karo','Deep breathing — 5 min','Protein-rich lunch khao',
+    'Evening walk — 20 min','Spine stretching karo','Body weight check karo',
+    'Sleep schedule fix karo','Steps — 8000 daily goal','Healthy dinner banao',
+    'Digital detox — 1 hr no phone','Posture improve karo — hourly reminder',
+    'Weekly meal prep karo','Stress management practice karo',
+    '30-day fitness progress photo lo','BMI check karo','Next 30 din ka fitness plan banao'
+  ],
+  ent: [
+    'Entrepreneur mindset book parho','Ek problem dhundho jo solve ho sake',
+    'Business idea list banao — 10 ideas','Best idea select karo','MVP plan banao',
+    'Prototype ya mockup banao','5 potential customers se baat karo','Feedback lo — improve karo',
+    'Online presence banao — LinkedIn','Pitch practice karo — 2 min elevator pitch',
+    'Local startup community join karo','Investors ke baare mein seekho',
+    'Revenue model finalize karo','Cost structure calculate karo','Break-even point nikalo',
+    'Digital marketing basics seekho','Social media ads try karo','Email marketing start karo',
+    'First paying customer dhundho','Sales call practice karo','Failure se seekho — reflect karo',
+    'Pivot karna seekho — flexible raho','Team build karna start karo',
+    'Freelancer hire karo for one task','Automation tools explore karo',
+    'Business metrics track karo','Investor pitch deck banao',
+    'Legal basics seekho — IP, contracts','Startup accelerator apply karo',
+    'Next 30 days ka growth plan banao'
+  ]
+};
+
+// State
+let plans = JSON.parse(localStorage.getItem('empire30day') || '{}');
+let currentEdit = null;
+let currentFilter = 'all';
+
+// ── RENDER ──
+function render() {
+  const main = document.getElementById('mainContent');
+  main.innerHTML = '';
+
+  CATEGORIES.forEach(cat => {
+    if (currentFilter !== 'all' && currentFilter !== cat.id) return;
+
+    const done = Array.from({length:30},(_,i)=>plans[cat.id]?.[i+1]?.done||false).filter(Boolean).length;
+    const pct = Math.round((done/30)*100);
+
+    // Update overview
+    document.getElementById('pct-'+cat.id).textContent = pct+'%';
+    document.getElementById('bar-'+cat.id).style.width = pct+'%';
+
+    const sec = document.createElement('div');
+    sec.className = 'cat-section reveal';
+
+    sec.innerHTML = `
+      <div class="cat-header">
+        <div class="cat-dot" style="background:${cat.colorVal}"></div>
+        <div class="cat-title" style="color:${cat.color}">${cat.emoji} ${cat.label}</div>
+        <div class="cat-count">${done}/30 done</div>
+      </div>
+      <div class="days-grid" id="grid-${cat.id}"></div>
+    `;
+    main.appendChild(sec);
+
+    const grid = sec.querySelector('#grid-'+cat.id);
+    for(let d=1;d<=30;d++){
+      const entry = plans[cat.id]?.[d];
+      const task = entry?.task || '';
+      const isDone = entry?.done || false;
+
+      const card = document.createElement('div');
+      card.className = `day-card ${cat.id} ${isDone?'done':''} ${!task?'empty':''}`;
+      card.innerHTML = `
+        <div class="day-num">Day ${d}</div>
+        <div class="day-task">${task || 'Tap to add...'}</div>
+      `;
+      card.onclick = () => openModal(cat, d);
+      grid.appendChild(card);
+    }
+  });
+
+  // Reveal animation
+  setTimeout(()=>{ document.querySelectorAll('.reveal').forEach(el=>el.style.opacity='1'); },50);
+}
+
+// ── MODAL ──
+function openModal(cat, day) {
+  currentEdit = { cat, day };
+  const entry = plans[cat.id]?.[day];
+
+  document.getElementById('modalDayLabel').textContent = 'Day '+day;
+  document.getElementById('modalCatBadge').textContent = cat.emoji+' '+cat.label;
+  document.getElementById('modalCatBadge').style.background = cat.colorVal+'22';
+  document.getElementById('modalCatBadge').style.color = cat.colorVal;
+  document.getElementById('modalTitle').textContent = cat.label+' — Day '+day;
+  document.getElementById('modalInput').value = entry?.task || '';
+
+  const isDone = entry?.done || false;
+  const doneBtn = document.getElementById('btnDoneToggle');
+  doneBtn.textContent = isDone ? '✓ Completed! (Undo)' : 'Mark as Done ✓';
+  doneBtn.style.background = isDone ? cat.colorVal+'22' : '';
+  doneBtn.style.color = isDone ? cat.colorVal : '';
+
+  const saveBtn = document.getElementById('btnSave');
+  saveBtn.style.background = `linear-gradient(135deg,${cat.colorVal},${cat.colorVal}99)`;
+  saveBtn.style.color = '#0a0a0a';
+
+  document.getElementById('modalOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('modalInput').focus(),300);
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  currentEdit = null;
+}
+
+function saveTask() {
+  if(!currentEdit) return;
+  const {cat, day} = currentEdit;
+  if(!plans[cat.id]) plans[cat.id]={};
+  plans[cat.id][day] = {
+    task: document.getElementById('modalInput').value.trim(),
+    done: plans[cat.id][day]?.done || false
+  };
+  localStorage.setItem('empire30day', JSON.stringify(plans));
+  closeModal();
+  render();
+}
+
+function toggleDone() {
+  if(!currentEdit) return;
+  const {cat, day} = currentEdit;
+  if(!plans[cat.id]) plans[cat.id]={};
+  if(!plans[cat.id][day]) plans[cat.id][day]={task:'',done:false};
+  plans[cat.id][day].done = !plans[cat.id][day].done;
+  localStorage.setItem('empire30day', JSON.stringify(plans));
+  const isDone = plans[cat.id][day].done;
+  const doneBtn = document.getElementById('btnDoneToggle');
+  doneBtn.textContent = isDone ? '✓ Completed! (Undo)' : 'Mark as Done ✓';
+  doneBtn.style.background = isDone ? cat.colorVal+'22' : '';
+  doneBtn.style.color = isDone ? cat.colorVal : '';
+  render();
+}
+
+
+
+
+// ── GEMINI KEY CHECK ──
+function checkGeminiKey(el) {
+  const status = document.getElementById('gkeyStatus');
+  if(el.value.trim().length > 20){
+    status.textContent = '✓ READY';
+    status.classList.add('ok');
+  } else {
+    status.textContent = 'NOT SET';
+    status.classList.remove('ok');
+  }
+}
+
+// ── GEMINI AI GENERATE ──
+async function generateWithAI() {
+  if(!currentEdit) return;
+  const {cat, day} = currentEdit;
+  const apiKey = document.getElementById('geminiKey')?.value.trim();
+
+  if(!apiKey || apiKey.length < 20) {
+    // Fallback to default task if no key
+    document.getElementById('modalInput').value = DEFAULT_TASKS[cat.id][day-1] || '';
+    const btn = document.getElementById('aiGenBtn');
+    btn.textContent = '⚠️ Key nahi hai — default use kiya';
+    setTimeout(()=>{ btn.textContent = '✨ Gemini AI se generate karo'; }, 2000);
+    return;
+  }
+
+  const btn = document.getElementById('aiGenBtn');
+  btn.classList.add('loading');
+  btn.textContent = '⏳ Generating...';
+
+  try {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          contents:[{
+            role:'user',
+            parts:[{text:`Generate a specific, actionable 30-day challenge task for Day ${day} in category: "${cat.label}".
+Give ONLY the task in 1-2 short sentences. Roman Urdu + English mix. No extra explanation. Make it practical and motivating.`}]
+          }],
+          generationConfig:{maxOutputTokens:120,temperature:0.8}
+        })
+      }
+    );
+    const data = await res.json();
+    if(data.error){
+      document.getElementById('modalInput').value = DEFAULT_TASKS[cat.id][day-1] || '';
+      btn.textContent = '⚠️ API Error — default use kiya';
+    } else {
+      const task = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || DEFAULT_TASKS[cat.id][day-1];
+      document.getElementById('modalInput').value = task;
+      btn.textContent = '✅ Generated!';
+    }
+  } catch(e) {
+    document.getElementById('modalInput').value = DEFAULT_TASKS[cat.id][day-1] || '';
+    btn.textContent = '⚠️ Error — default use kiya';
+  }
+
+  setTimeout(()=>{ btn.textContent = '✨ Gemini AI se generate karo'; btn.classList.remove('loading'); }, 2000);
+}
+
+// ── FILTER ──
+function filterCat(catId, btn) {
+  currentFilter = catId;
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  render();
+}
+
+// Close modal on overlay click
+document.getElementById('modalOverlay').addEventListener('click', function(e){
+  if(e.target===this) closeModal();
+});
+
+// ── INIT ──
+render();
+</script>
+</body>
+</html>
